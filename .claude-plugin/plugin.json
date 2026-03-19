@@ -1,0 +1,13 @@
+{
+  "name": "kpt-hooks",
+  "version": "1.0.0",
+  "description": "KPT (Keep/Problem/Try) retrospective automation — auto-logs Claude Code activity and provides /kpt, /kpt-report, /kpt-trends skills for structured reflection",
+  "author": {
+    "name": "Tomohiro Owada",
+    "url": "https://github.com/tomohiro-owada"
+  },
+  "repository": "https://github.com/tomohiro-owada/kpt-hooks",
+  "license": "MIT",
+  "keywords": ["kpt", "retrospective", "hooks", "productivity", "reflection"],
+  "hooks": "./hooks/hooks.json"
+}
