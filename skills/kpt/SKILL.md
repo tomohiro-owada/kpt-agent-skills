@@ -1,83 +1,60 @@
 ---
 name: kpt
-description: "KPT (Keep/Problem/Try) retrospective. Reads activity logs and facilitates structured reflection on recent work. Use when reviewing past work, conducting retrospectives, or reflecting on development practices."
+description: "KPT (Keep/Problem/Try) retrospective that reads Claude Code activity logs and facilitates structured reflection. Use this skill whenever the user mentions retrospective,振り返り, KPT, reflecting on work, reviewing what went well or poorly, or wants to improve their development process — even if they don't explicitly say 'KPT'."
 user-invocable: true
 argument-hint: "<period: today | week | month | YYYY-MM-DD..YYYY-MM-DD>"
 ---
 
-# KPT Retrospective Facilitator
+# KPT Retrospective
 
-You are facilitating a KPT (Keep / Problem / Try) retrospective session.
+Facilitate a KPT (Keep / Problem / Try) retrospective based on real activity data.
 
-## Step 1: Load Activity Logs
+The value of this skill is grounding retrospectives in actual logs rather than fuzzy memory. Reference specific entries when suggesting Keep/Problem items — vague observations aren't useful.
 
-Activity logs are stored as monthly files at `~/.claude/kpt-logs/activity_YYYY-MM.jsonl` (e.g., `activity_2026-03.jsonl`).
+## Load Activity Logs
 
-Based on the requested period, determine which monthly files to read. For example, `week` might span two months. Read all relevant monthly files by globbing `~/.claude/kpt-logs/activity_*.jsonl`.
+See [log-format.md](../references/log-format.md) for file locations, schema, and period parsing.
 
-The user specified this period: $ARGUMENTS
+Period requested: $ARGUMENTS
 
-Interpret the period argument:
-- `today` or empty → today's date only
-- `yesterday` → yesterday's date only
-- `week` → last 7 days
-- `month` → last 30 days
-- `YYYY-MM-DD` → that specific date
-- `YYYY-MM-DD..YYYY-MM-DD` → date range (inclusive)
+## Summarize Activity
 
-Filter the JSONL entries by `local_date` field to match the requested period.
+Group filtered entries by **project**, then by **session_id**. Present a timeline-style overview so the user can recall what they worked on. Keep it concise — this is context-setting, not the main event.
 
-If no logs are found for the period, tell the user and suggest checking a wider range.
+## Facilitate KPT — One Section at a Time
 
-## Step 2: Summarize Activity
-
-Group the filtered entries by:
-1. **Project** (from the `project` field)
-2. **Session** (from the `session_id` field)
-
-For each session, provide a brief summary of what was accomplished based on the `message` fields.
-
-Present this as a timeline-style overview so the user can recall what they worked on.
-
-## Step 3: Facilitate KPT Discussion
-
-Guide the user through each section interactively. Ask questions and wait for their response before moving on.
+This is interactive. Ask one section, wait for the user's response, then move on. Don't rush through all three at once — the pauses are where reflection happens.
 
 ### Keep (続けたいこと)
-Ask the user:
-- "この期間で**うまくいったこと**、**続けたいこと**は何ですか？"
-- Suggest potential Keeps based on the activity logs (e.g., consistent testing, good commit practices, effective tool usage)
-- Help them articulate specific, actionable keeps
+
+Ask: "この期間で **うまくいったこと**、**続けたいこと** は何ですか？"
+
+Suggest 2-3 potential Keeps you notice in the logs (consistent testing, good commit practices, effective tool usage, smooth project switches). The user may not notice their own good habits — surface them.
 
 ### Problem (問題・課題)
-Ask the user:
-- "**困ったこと**、**うまくいかなかったこと**はありますか？"
-- Point out potential issues you notice in the logs (e.g., repeated errors, long sessions on one task, context switches)
-- Help them identify root causes, not just symptoms
+
+Ask: "**困ったこと**、**うまくいかなかったこと** はありますか？"
+
+Look for signals in the logs: repeated errors, unusually long sessions on one task, frequent context switches between projects, sessions that end abruptly. Point these out as conversation starters. Help the user dig into root causes rather than symptoms — ask "why" at least once.
 
 ### Try (次に試したいこと)
-Ask the user:
-- "次に**試してみたいこと**、**改善したいこと**は何ですか？"
-- Suggest concrete improvements based on the Problems identified
-- Each Try should be specific and actionable, not vague aspirations
 
-## Step 4: Generate Summary
+Ask: "次に **試してみたいこと**、**改善したいこと** は何ですか？"
 
-After the discussion, create a structured KPT summary in markdown format. Save it to `~/.claude/kpt-logs/retrospectives/YYYY-MM-DD_kpt.md` (using today's date).
+Each Try should be specific and actionable. "もっとテストを書く" is too vague — "PR作成前に必ずテストを追加する" is better. Suggest concrete Tries that address the Problems identified.
 
-The summary should include:
-- Period covered
-- Activity overview
-- Keep items (with context)
-- Problem items (with root causes)
-- Try items (with concrete next actions)
-- Any follow-up items or commitments
+## Save Summary
 
-Tell the user where the summary was saved.
+After the discussion, save a structured KPT summary to `~/.claude/kpt-logs/retrospectives/YYYY-MM-DD_kpt.md` (today's date).
 
-## Communication Style
+Include: period covered, activity overview, Keep/Problem/Try items with context and concrete next actions.
 
-- Conduct the retrospective conversationally in Japanese
-- Be supportive but honest — point out patterns the user might not notice
-- Focus on actionable insights, not generic advice
-- Reference specific activities from the logs to ground the discussion
+If a file for today already exists, append a timestamp suffix (e.g., `_kpt_2.md`) to avoid overwriting.
+
+Tell the user the saved path.
+
+## Style
+
+- Conduct in Japanese
+- Be supportive but honest — patterns the user doesn't notice are the most valuable observations
+- Reference specific log entries, not generic advice

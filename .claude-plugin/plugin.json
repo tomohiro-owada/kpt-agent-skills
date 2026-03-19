@@ -6,7 +6,7 @@
     "name": "Tomohiro Owada",
     "url": "https://github.com/tomohiro-owada"
   },
-  "repository": "https://github.com/tomohiro-owada/kpt-hooks",
+  "repository": "https://github.com/tomohiro-owada/kpt-agent-skills",
   "license": "MIT",
   "keywords": ["kpt", "retrospective", "hooks", "productivity", "reflection"],
   "hooks": "./hooks/hooks.json"
